@@ -1,0 +1,18 @@
+# navsat_transform configuration for the isolated Week 5 estimator.
+navsat_trust_transform:
+  ros__parameters:
+    use_sim_time: true
+    frequency: 20.0
+    delay: 0.0
+    magnetic_declination_radians: 0.0
+    # Gazebo spherical heading=0 maps world +X to geographic north, while
+    # navsat_transform expects yaw=0 to face east. Rotate north into odom +X.
+    yaw_offset: 1.5707963267948966
+    zero_altitude: true
+    broadcast_utm_transform: false
+    broadcast_utm_transform_as_parent_frame: false
+    publish_filtered_gps: false
+    use_odometry_yaw: false
+    wait_for_datum: true
+    datum: [39.7391356028, -104.9903000000, 0.0]
+    transform_timeout: 0.2

@@ -1,0 +1,55 @@
+# Experimental Week 5 filter. This file does not configure the production EKF.
+ekf_trust_fusion_node:
+  ros__parameters:
+    use_sim_time: true
+    frequency: 30.0
+    sensor_timeout: 0.5
+    two_d_mode: true
+    publish_tf: false
+    print_diagnostics: true
+    map_frame: map
+    odom_frame: odom
+    base_link_frame: base_footprint
+    world_frame: odom
+
+    # Operational wheel odometry contributes planar body-frame velocity. The
+    # measured zero lateral velocity constrains the nonholonomic vy state;
+    # omitting it makes dead reckoning unobservable after GNSS is gated.
+    # Position is deliberately not fused because it is wheel-integrated.
+    odom0: /ares/odom_operational
+    odom0_config: [false, false, false,
+                   false, false, false,
+                   true,  true,  false,
+                   false, false, false,
+                   false, false, false]
+    odom0_queue_size: 20
+    odom0_differential: false
+    odom0_relative: false
+
+    # The IMU contributes yaw rate only. Absolute orientation is not fused.
+    imu0: /ares/imu_operational
+    imu0_config: [false, false, false,
+                  false, false, false,
+                  false, false, false,
+                  false, false, true,
+                  false, false, false]
+    imu0_queue_size: 50
+    imu0_differential: false
+    imu0_relative: false
+    imu0_remove_gravitational_acceleration: false
+
+    # navsat_transform_node converts the selected GNSS input to odometry.
+    # Only planar position is fused, so NavSatFix covariance directly controls
+    # the measurement weight applied by robot_localization.
+    odom1: /odometry/gps_trusted
+    odom1_config: [true,  true,  false,
+                   false, false, false,
+                   false, false, false,
+                   false, false, false,
+                   false, false, false]
+    odom1_queue_size: 10
+    odom1_differential: false
+    odom1_relative: false
+    odom1_pose_rejection_threshold: 20.0
+
+    use_control: false

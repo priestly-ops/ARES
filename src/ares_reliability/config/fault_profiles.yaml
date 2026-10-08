@@ -1,0 +1,91 @@
+# Week 2 experimental fault profiles. The launch file selects one profile.
+profiles:
+  healthy:
+    enabled: false
+    mode: none
+    east_offset_m: 0.0
+    north_offset_m: 0.0
+    altitude_offset_m: 0.0
+    drift_rate_east_mps: 0.0
+    drift_rate_north_mps: 0.0
+    dropout_every_n: 1
+
+  east_1m:
+    enabled: true
+    mode: step
+    east_offset_m: 1.0
+    north_offset_m: 0.0
+    altitude_offset_m: 0.0
+    drift_rate_east_mps: 0.0
+    drift_rate_north_mps: 0.0
+    dropout_every_n: 1
+
+  east_3m:
+    enabled: true
+    mode: step
+    east_offset_m: 3.0
+    north_offset_m: 0.0
+    altitude_offset_m: 0.0
+    drift_rate_east_mps: 0.0
+    drift_rate_north_mps: 0.0
+    dropout_every_n: 1
+
+  east_5m:
+    enabled: true
+    mode: step
+    east_offset_m: 5.0
+    north_offset_m: 0.0
+    altitude_offset_m: 0.0
+    drift_rate_east_mps: 0.0
+    drift_rate_north_mps: 0.0
+    dropout_every_n: 1
+
+  east_10m:
+    enabled: true
+    mode: step
+    east_offset_m: 10.0
+    north_offset_m: 0.0
+    altitude_offset_m: 0.0
+    drift_rate_east_mps: 0.0
+    drift_rate_north_mps: 0.0
+    dropout_every_n: 1
+
+  slow_east_drift:
+    enabled: true
+    mode: drift
+    east_offset_m: 0.0
+    north_offset_m: 0.0
+    altitude_offset_m: 0.0
+    drift_rate_east_mps: 0.2
+    drift_rate_north_mps: 0.0
+    dropout_every_n: 1
+
+  north_step:
+    enabled: true
+    mode: step
+    east_offset_m: 0.0
+    north_offset_m: 5.0
+    altitude_offset_m: 0.0
+    drift_rate_east_mps: 0.0
+    drift_rate_north_mps: 0.0
+    dropout_every_n: 1
+
+  dropout:
+    enabled: true
+    mode: dropout
+    east_offset_m: 0.0
+    north_offset_m: 0.0
+    altitude_offset_m: 0.0
+    drift_rate_east_mps: 0.0
+    drift_rate_north_mps: 0.0
+    dropout_every_n: 1
+
+monitor:
+  # Experimental Week 2 defaults, not theoretically optimal thresholds.
+  window_size: 5
+  healthy_threshold_m: 1.5
+  fault_threshold_m: 3.0
+  required_consecutive: 5
+  gnss_timeout_sec: 1.0
+  dropout_check_period_sec: 0.2
+  diagnostic_log_every_n: 5

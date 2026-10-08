@@ -1,0 +1,3 @@
+#!/usr/bin/env python3
+from healthy_mission import main
+main(health_only=True)

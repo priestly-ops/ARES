@@ -1,0 +1,74 @@
+# Week 3 experimental defaults. GNSS entry thresholds intentionally preserve
+# Week 2 reproducibility. IMU/localization thresholds are provisional until
+# the recorded healthy-motion datasets are large enough for calibration.
+gnss_monitor:
+  window_size: 5
+  healthy_threshold_m: 1.5
+  fault_threshold_m: 3.0
+  required_consecutive: 5
+  gnss_timeout_sec: 1.0
+  dropout_check_period_sec: 0.2
+  diagnostic_log_every_n: 10
+  max_sync_error_sec: 0.15
+  history_duration_sec: 5.0
+  interpolate_odometry: false
+  expected_odometry_rate_hz: 30.0
+  degraded_exit_m: 2.0
+  healthy_exit_m: 1.2
+  degrade_persistence: 5
+  untrusted_persistence: 5
+  recovery_persistence: 10
+
+imu_monitor:
+  imu_topic: /ares/imu
+  # Raw odometry avoids comparing IMU against an EKF output that already
+  # incorporates the same IMU yaw rate.
+  odometry_topic: /ares/odom
+  max_sync_error_sec: 0.05
+  history_duration_sec: 2.0
+  interpolate_odometry: true
+  expected_odometry_rate_hz: 50.0
+  startup_grace_sec: 1.0
+  imu_timeout_sec: 0.25
+  window_size: 20
+  degraded_enter_radps: 0.15
+  untrusted_enter_radps: 0.40
+  degraded_exit_radps: 0.25
+  healthy_exit_radps: 0.10
+  degrade_persistence: 10
+  untrusted_persistence: 10
+  recovery_persistence: 30
+
+localization_monitor:
+  localization_topic: /amcl_pose
+  # AMCL uses odometry in its motion model. This branch is explicitly marked
+  # correlated and is not a third independent vote.
+  odometry_topic: /ares/odom
+  map_frame: map
+  odom_frame: odom
+  max_sync_error_sec: 0.20
+  history_duration_sec: 5.0
+  expected_odometry_rate_hz: 50.0
+  localization_timeout_sec: 2.0
+  startup_grace_sec: 2.0
+  tf_timeout_sec: 0.1
+  window_size: 5
+  degraded_enter_m: 0.20
+  untrusted_enter_m: 0.75
+  degraded_exit_m: 0.40
+  healthy_exit_m: 0.10
+  degrade_persistence: 5
+  untrusted_persistence: 5
+  recovery_persistence: 10
+
+recovery_manager:
+  degraded_covariance_factor: 10.0
+  untrusted_covariance_factor: 100.0
+  untrusted_observations_before_gate: 5
+  probation_observations: 10
+  probation_covariance_factor: 5.0
+
+gnss_trusted_proxy:
+  input_topic: /ares/gps
+  output_topic: /ares/gps_trusted
+  unknown_variance_m2: 1.0

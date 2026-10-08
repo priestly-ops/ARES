@@ -1,0 +1,16 @@
+# Initial read-only audit (2026-09-22)
+
+Audit completed before source modifications. No top-level Git repository. Original ARES packages, map, startup/stop scripts and experimental bridges preserved in `backups/week1_initial/ares_before_changes.tar.gz` (SHA256 2d530d175c3397e25d363a8db0a66b94489c19b7f86bb5789785a5e9caa3bab3).
+
+* Four ARES packages: simulation, Jackal description, localization, and empty benchmark-worlds scaffold. Unrelated turtlebot-maze and legacy Jackal source packages are outside scope.
+* Simulation CMake installs worlds/models/config/launch. No baseline launch exists. World uses DART physics at 1 ms, Ogre2 sensors, IMU/NavSat systems, warehouse boxes/walls, extra static obstacle and three remote-asset animated actors. Robot included through an absolute source path at (0,-7,0.10), yaw 1.5708.
+* SDF has four driven revolute wheels, DiffDrive publishing odom at 50 Hz (odom -> base_footprint), IMU 100 Hz, GPU LiDAR 10 Hz/360 samples/full circle/0.12–20 m, GNSS 10 Hz, depth camera 320x240/5 Hz with always_on false. Camera sensor still exists; false is not evidence it costs nothing.
+* bridge.yaml currently bridges cmd_vel, odom and IMU only. Scan, clock, GPS and camera are commented out. Experimental bridge_minimal has scan but no clock. Root bridge variants are isolation artifacts.
+* RSP xacro root: base_footprint -> base_link (+0.098 z) -> chassis_link -> sensors/wheels. Wheels are fixed in ROS despite revolute simulation joints. SDF chassis height is 0.18 and wheels 0.098; xacro wheel offset +0.0345 disagrees with SDF -0.082. Camera transform also disagrees (URDF .18,0,.20 vs SDF .20,0,.12).
+* EKF is planar at 30 Hz, TF authority odom -> base_footprint; currently fuses wheel x/y position, x/y velocity and yaw rate, no IMU. Standalone ekf.launch remaps output to /ares/odometry/filtered while Nav2 expects /odometry/filtered.
+* Nav2 uses base_footprint, AMCL map -> odom, NavFn A*, regulated pure pursuit at 10 Hz, 0.20 m/0.30 rad goal tolerance, scan costmaps, 0.30 m radius and 0.70 m inflation. Local costmap repeats several YAML keys. Map path is absolute. Existing map is 416x464 at 0.05 m, origin (-3.363,-13.173).
+* start_ares.sh uses broad SIGKILL patterns, fixed sleeps, manual lifecycle transitions, forces RViz and software rendering, resets spawn and AMCL to a historically recorded map pose (0,0,0). Calls cmd_vel_adapter without .py, but CMake installs the .py executable; setup.py console entrypoint is not used by the ament_cmake package. Adapter converts stamped Nav2 command to Gazebo Twist. Stop script matches 'gz sim', potentially missing renamed Ruby/Gazebo children.
+* Existing waypoint mission uses five hardcoded goals, writes simple CSV, has unbounded waits and continues spinning after completion. initial_pose_sync uses a conflicting world/map calibration and blocking subprocess parsing; startup explicitly warns not to use it.
+* Host check: no Gazebo/bridge/Nav2/EKF running. WSL, 12 logical CPUs, ~7.7 GiB RAM. No /dev/dri, but host GLX reports accelerated D3D12 Intel Iris Xe through WSLg. Sandbox process/GPU visibility cannot establish host performance.
+
+Performance diagnosis remains unproven pending controlled measurements. No baseline acceptance passes inferred from configuration.

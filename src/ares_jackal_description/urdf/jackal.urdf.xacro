@@ -1,0 +1,227 @@
+<?xml version="1.0"?>
+
+<robot xmlns:xacro="http://www.ros.org/wiki/xacro"
+       name="ares_jackal">
+
+  <!-- ========================================================= -->
+  <!-- Jackal geometry                                           -->
+  <!-- ========================================================= -->
+
+  <xacro:property name="PI" value="3.1415926535897931"/>
+
+  <xacro:property name="wheelbase" value="0.262"/>
+  <xacro:property name="track" value="0.37559"/>
+
+  <xacro:property name="wheel_vertical_offset" value="-0.082"/>
+  <xacro:property name="footprint_vertical_offset" value="-0.0655"/>
+
+  <xacro:property name="wheel_radius" value="0.098"/>
+  <xacro:property name="wheel_width" value="0.040"/>
+
+  <xacro:property name="chassis_length" value="0.420"/>
+  <xacro:property name="chassis_width" value="0.310"/>
+  <xacro:property name="chassis_height" value="0.184"/>
+
+  <!-- ========================================================= -->
+  <!-- Materials                                                 -->
+  <!-- ========================================================= -->
+
+  <material name="dark_grey">
+    <color rgba="0.2 0.2 0.2 1.0"/>
+  </material>
+
+  <material name="black">
+    <color rgba="0.15 0.15 0.15 1.0"/>
+  </material>
+
+  <!-- ========================================================= -->
+  <!-- Base footprint                                            -->
+  <!-- ========================================================= -->
+
+  <link name="base_footprint"/>
+
+  <joint name="base_footprint_joint" type="fixed">
+    <parent link="base_footprint"/>
+    <child link="base_link"/>
+    <origin xyz="0 0 0.18" rpy="0 0 0"/>
+  </joint>
+
+  <!-- ========================================================= -->
+  <!-- Base link                                                 -->
+  <!-- ========================================================= -->
+
+  <link name="base_link"/>
+
+  <joint name="base_link_joint" type="fixed">
+    <parent link="base_link"/>
+    <child link="chassis_link"/>
+    <origin xyz="0 0 0" rpy="0 0 0"/>
+  </joint>
+
+  <!-- ========================================================= -->
+  <!-- Chassis                                                   -->
+  <!-- ========================================================= -->
+
+  <link name="chassis_link">
+
+    <visual>
+      <origin
+        xyz="0 0 ${footprint_vertical_offset}"
+        rpy="${PI/2} 0 ${PI/2}"/>
+
+      <geometry>
+        <mesh
+          filename="package://ares_jackal_description/meshes/jackal-base.stl"/>
+      </geometry>
+
+      <material name="dark_grey"/>
+    </visual>
+
+    <collision>
+      <origin xyz="0 0 ${chassis_height/2}" rpy="0 0 0"/>
+
+      <geometry>
+        <box
+          size="${chassis_length}
+                ${chassis_width}
+                ${chassis_height}"/>
+      </geometry>
+    </collision>
+
+    <inertial>
+      <origin xyz="0.012 0.002 0.067" rpy="0 0 0"/>
+
+      <mass value="16.523"/>
+
+      <inertia
+        ixx="0.3136"
+        ixy="-0.0008"
+        ixz="0.0164"
+        iyy="0.3922"
+        iyz="-0.0009"
+        izz="0.4485"/>
+    </inertial>
+
+  </link>
+
+  <!-- ========================================================= -->
+  <!-- Wheel macro                                               -->
+  <!-- ========================================================= -->
+
+  <xacro:macro name="jackal_wheel"
+               params="prefix x y">
+
+    <link name="${prefix}_wheel_link">
+
+      <visual>
+        <origin xyz="0 0 0" rpy="${PI/2} 0 0"/>
+
+        <geometry>
+          <mesh
+            filename="package://ares_jackal_description/meshes/jackal-wheel.stl"/>
+        </geometry>
+
+        <material name="black"/>
+      </visual>
+
+      <collision>
+        <origin xyz="0 0 0" rpy="${PI/2} 0 0"/>
+
+        <geometry>
+          <cylinder
+            radius="${wheel_radius}"
+            length="${wheel_width}"/>
+        </geometry>
+      </collision>
+
+      <inertial>
+        <origin xyz="0 0 0" rpy="0 0 0"/>
+
+        <mass value="0.477"/>
+
+        <inertia
+          ixx="0.0013"
+          ixy="0"
+          ixz="0"
+          iyy="0.0024"
+          iyz="0"
+          izz="0.0013"/>
+      </inertial>
+
+    </link>
+
+    <joint name="${prefix}_wheel_joint"
+       type="fixed">
+
+      <parent link="chassis_link"/>
+      <child link="${prefix}_wheel_link"/>
+
+      <origin
+        xyz="${x} ${y} ${wheel_vertical_offset}"
+        rpy="0 0 0"/>
+
+    </joint>
+
+  </xacro:macro>
+
+  <!-- ========================================================= -->
+  <!-- Wheels                                                    -->
+  <!-- ========================================================= -->
+
+  <xacro:jackal_wheel
+    prefix="front_left"
+    x="${wheelbase/2}"
+    y="${track/2}"/>
+
+  <xacro:jackal_wheel
+    prefix="front_right"
+    x="${wheelbase/2}"
+    y="${-track/2}"/>
+
+  <xacro:jackal_wheel
+    prefix="rear_left"
+    x="${-wheelbase/2}"
+    y="${track/2}"/>
+
+  <xacro:jackal_wheel
+    prefix="rear_right"
+    x="${-wheelbase/2}"
+    y="${-track/2}"/>
+
+  <!-- ========================================================= -->
+  <!-- Sensor frames                                             -->
+  <!-- ========================================================= -->
+
+  <link name="imu_link"/>
+
+  <joint name="imu_joint" type="fixed">
+    <parent link="chassis_link"/>
+    <child link="imu_link"/>
+    <origin xyz="0 0 0.10" rpy="0 0 0"/>
+  </joint>
+
+  <link name="lidar_link"/>
+
+  <joint name="lidar_joint" type="fixed">
+    <parent link="chassis_link"/>
+    <child link="lidar_link"/>
+    <origin xyz="0.10 0 0.22" rpy="0 0 0"/>
+  </joint>
+
+  <link name="camera_link"/>
+
+  <joint name="camera_joint" type="fixed">
+    <parent link="chassis_link"/>
+    <child link="camera_link"/>
+    <origin xyz="0.20 0 0.12" rpy="0 0 0"/>
+  </joint>
+
+  <link name="gps_link"/>
+
+  <joint name="gps_joint" type="fixed">
+    <parent link="chassis_link"/>
+    <child link="gps_link"/>
+    <origin xyz="-0.18 0.126 0.1815" rpy="0 0 0"/>
+  </joint>
+
+</robot>

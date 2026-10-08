@@ -1,0 +1,756 @@
+<?xml version="1.0" ?>
+
+<sdf version="1.10">
+
+  <world name="ares_world">
+
+    <physics name="physics" type="ignored">
+      <max_step_size>0.001</max_step_size>
+      <real_time_factor>1.0</real_time_factor>
+    </physics>
+
+    <spherical_coordinates>
+      <surface_model>EARTH_WGS84</surface_model>
+      <world_frame_orientation>ENU</world_frame_orientation>
+      <latitude_deg>39.7392</latitude_deg>
+      <longitude_deg>-104.9903</longitude_deg>
+      <elevation>1609.0</elevation>
+      <heading_deg>0</heading_deg>
+    </spherical_coordinates>
+
+    <plugin
+      filename="gz-sim-physics-system"
+      name="gz::sim::systems::Physics"/>
+
+    <plugin
+      filename="gz-sim-user-commands-system"
+      name="gz::sim::systems::UserCommands"/>
+
+    <plugin
+      filename="gz-sim-scene-broadcaster-system"
+      name="gz::sim::systems::SceneBroadcaster"/>
+
+    <plugin
+      filename="gz-sim-sensors-system"
+      name="gz::sim::systems::Sensors">
+      <render_engine>ogre2</render_engine>
+    </plugin>
+
+    <plugin
+      filename="gz-sim-imu-system"
+      name="gz::sim::systems::Imu"/>
+
+    <plugin
+      filename="gz-sim-navsat-system"
+      name="gz::sim::systems::NavSat"/>
+
+
+    <!-- ================================ -->
+    <!-- LIGHT                            -->
+    <!-- ================================ -->
+
+    <light type="directional" name="sun">
+
+      <pose>0 0 10 0 0 0</pose>
+
+      <diffuse>0.8 0.8 0.8 1</diffuse>
+
+      <specular>0.2 0.2 0.2 1</specular>
+
+      <direction>-0.5 0.1 -0.9</direction>
+
+    </light>
+
+
+    <!-- ================================ -->
+    <!-- GROUND                           -->
+    <!-- ================================ -->
+
+    <model name="ground_plane">
+
+      <static>true</static>
+
+      <link name="link">
+
+        <collision name="collision">
+
+          <geometry>
+
+            <plane>
+
+              <normal>0 0 1</normal>
+
+              <size>100 100</size>
+
+            </plane>
+
+          </geometry>
+
+        </collision>
+
+        <visual name="visual">
+
+          <geometry>
+
+            <plane>
+
+              <normal>0 0 1</normal>
+
+              <size>100 100</size>
+
+            </plane>
+
+          </geometry>
+
+        </visual>
+
+      </link>
+
+    </model>
+
+
+    <!-- ================================ -->
+    <!-- OUTER WAREHOUSE WALLS            -->
+    <!-- ================================ -->
+
+    <model name="north_wall">
+
+      <static>true</static>
+
+      <pose>0 10 1.5 0 0 0</pose>
+
+      <link name="link">
+
+        <collision name="collision">
+
+          <geometry>
+
+            <box>
+
+              <size>20 0.25 3</size>
+
+            </box>
+
+          </geometry>
+
+        </collision>
+
+        <visual name="visual">
+
+          <geometry>
+
+            <box>
+
+              <size>20 0.25 3</size>
+
+            </box>
+
+          </geometry>
+
+        </visual>
+
+      </link>
+
+    </model>
+
+
+    <model name="south_wall">
+
+      <static>true</static>
+
+      <pose>0 -10 1.5 0 0 0</pose>
+
+      <link name="link">
+
+        <collision name="collision">
+
+          <geometry>
+
+            <box>
+
+              <size>20 0.25 3</size>
+
+            </box>
+
+          </geometry>
+
+        </collision>
+
+        <visual name="visual">
+
+          <geometry>
+
+            <box>
+
+              <size>20 0.25 3</size>
+
+            </box>
+
+          </geometry>
+
+        </visual>
+
+      </link>
+
+    </model>
+
+
+    <model name="east_wall">
+
+      <static>true</static>
+
+      <pose>10 0 1.5 0 0 0</pose>
+
+      <link name="link">
+
+        <collision name="collision">
+
+          <geometry>
+
+            <box>
+
+              <size>0.25 20 3</size>
+
+            </box>
+
+          </geometry>
+
+        </collision>
+
+        <visual name="visual">
+
+          <geometry>
+
+            <box>
+
+              <size>0.25 20 3</size>
+
+            </box>
+
+          </geometry>
+
+        </visual>
+
+      </link>
+
+    </model>
+
+
+    <model name="west_wall">
+
+      <static>true</static>
+
+      <pose>-10 0 1.5 0 0 0</pose>
+
+      <link name="link">
+
+        <collision name="collision">
+
+          <geometry>
+
+            <box>
+
+              <size>0.25 20 3</size>
+
+            </box>
+
+          </geometry>
+
+        </collision>
+
+        <visual name="visual">
+
+          <geometry>
+
+            <box>
+
+              <size>0.25 20 3</size>
+
+            </box>
+
+          </geometry>
+
+        </visual>
+
+      </link>
+
+    </model>
+
+
+    <!-- ================================ -->
+    <!-- WAREHOUSE SHELVES                -->
+    <!-- ================================ -->
+
+    <model name="shelf_1">
+
+      <static>true</static>
+
+      <pose>4 3 1 0 0 0</pose>
+
+      <link name="link">
+
+        <collision name="collision">
+
+          <geometry>
+
+            <box>
+
+              <size>1 5 2</size>
+
+            </box>
+
+          </geometry>
+
+        </collision>
+
+        <visual name="visual">
+
+          <geometry>
+
+            <box>
+
+              <size>1 5 2</size>
+
+            </box>
+
+          </geometry>
+
+        </visual>
+
+      </link>
+
+    </model>
+
+
+    <model name="shelf_2">
+
+      <static>true</static>
+
+      <pose>0 3 1 0 0 0</pose>
+
+      <link name="link">
+
+        <collision name="collision">
+
+          <geometry>
+
+            <box>
+
+              <size>1 5 2</size>
+
+            </box>
+
+          </geometry>
+
+        </collision>
+
+        <visual name="visual">
+
+          <geometry>
+
+            <box>
+
+              <size>1 5 2</size>
+
+            </box>
+
+          </geometry>
+
+        </visual>
+
+      </link>
+
+    </model>
+
+
+    <model name="shelf_3">
+
+      <static>true</static>
+
+      <pose>-4 3 1 0 0 0</pose>
+
+      <link name="link">
+
+        <collision name="collision">
+
+          <geometry>
+
+            <box>
+
+              <size>1 5 2</size>
+
+            </box>
+
+          </geometry>
+
+        </collision>
+
+        <visual name="visual">
+
+          <geometry>
+
+            <box>
+
+              <size>1 5 2</size>
+
+            </box>
+
+          </geometry>
+
+        </visual>
+
+      </link>
+
+    </model>
+
+
+    <!-- ================================ -->
+    <!-- PALLET / BOX OBSTACLES           -->
+    <!-- ================================ -->
+
+    <model name="crate_1">
+
+      <static>true</static>
+
+      <pose>3 -4 0.5 0 0 0.35</pose>
+
+      <link name="link">
+
+        <collision name="collision">
+
+          <geometry>
+
+            <box>
+
+              <size>1.5 1.5 1</size>
+
+            </box>
+
+          </geometry>
+
+        </collision>
+
+        <visual name="visual">
+
+          <geometry>
+
+            <box>
+
+              <size>1.5 1.5 1</size>
+
+            </box>
+
+          </geometry>
+
+        </visual>
+
+      </link>
+
+    </model>
+
+
+    <model name="crate_2">
+
+      <static>true</static>
+
+      <pose>-3 -5 0.75 0 0 -0.3</pose>
+
+      <link name="link">
+
+        <collision name="collision">
+
+          <geometry>
+
+            <box>
+
+              <size>2 1 1.5</size>
+
+            </box>
+
+          </geometry>
+
+        </collision>
+
+        <visual name="visual">
+
+          <geometry>
+
+            <box>
+
+              <size>2 1 1.5</size>
+
+            </box>
+
+          </geometry>
+
+        </visual>
+
+      </link>
+
+    </model>
+
+
+    <model name="crate_3">
+
+      <static>true</static>
+
+      <pose>6 -2 0.6 0 0 0</pose>
+
+      <link name="link">
+
+        <collision name="collision">
+
+          <geometry>
+
+            <box>
+
+              <size>1.2 2 1.2</size>
+
+            </box>
+
+          </geometry>
+
+        </collision>
+
+        <visual name="visual">
+
+          <geometry>
+
+            <box>
+
+              <size>1.2 2 1.2</size>
+
+            </box>
+
+          </geometry>
+
+        </visual>
+
+      </link>
+
+    </model>
+
+
+    <!-- ================================ -->
+    <!-- ARES ROBOT                       -->
+    <!-- ================================ -->
+
+    <include>
+
+      <uri>
+        file:///home/priestly/ares_ws/src/ares_simulation/models/ares_jackal
+      </uri>
+
+      <name>ares_jackal</name>
+
+      <pose>0 -7 0.10 0 0 1.5708</pose>
+
+    </include>
+
+
+    <!-- ================================ -->
+    <!-- R1 STATIC TEST OBSTACLE          -->
+    <!-- ================================ -->
+
+    <model name="r1_test_obstacle">
+
+      <static>true</static>
+
+      <pose>0 -3 0.5 0 0 0</pose>
+
+      <link name="link">
+
+        <collision name="collision">
+
+          <geometry>
+
+            <box>
+
+              <size>1.0 1.0 1.0</size>
+
+            </box>
+
+          </geometry>
+
+        </collision>
+
+        <visual name="visual">
+
+          <geometry>
+
+            <box>
+
+              <size>1.0 1.0 1.0</size>
+
+            </box>
+
+          </geometry>
+
+          <material>
+
+            <ambient>0.8 0.2 0.2 1</ambient>
+
+            <diffuse>0.8 0.2 0.2 1</diffuse>
+
+          </material>
+
+        </visual>
+
+      </link>
+
+    </model>
+
+
+    <!-- ================================ -->
+<!-- WALKING HUMAN 1                  -->
+<!-- CROSSES WP1 -> WP2 ROUTE         -->
+<!-- ================================ -->
+
+<actor name="walking_person_1">
+
+  <pose>1.8 -4.8 0 0 0 0</pose>
+
+  <skin>
+    <filename>https://fuel.ignitionrobotics.org/1.0/Mingfei/models/actor/tip/files/meshes/walk.dae</filename>
+    <scale>1.0</scale>
+  </skin>
+
+  <animation name="walking">
+    <filename>https://fuel.ignitionrobotics.org/1.0/Mingfei/models/actor/tip/files/meshes/walk.dae</filename>
+    <scale>1.0</scale>
+    <interpolate_x>true</interpolate_x>
+  </animation>
+
+  <script>
+
+    <loop>true</loop>
+    <delay_start>0.0</delay_start>
+    <auto_start>true</auto_start>
+
+    <trajectory id="0" type="walking">
+
+      <waypoint>
+        <time>0.0</time>
+        <pose>0.8 -4.8 0 0 0 0</pose>
+      </waypoint>
+
+      <waypoint>
+        <time>5.0</time>
+        <pose>3.0 -4.8 0 0 0 0</pose>
+      </waypoint>
+
+      <waypoint>
+        <time>10.0</time>
+        <pose>0.8 -4.8 0 0 0 3.14159</pose>
+      </waypoint>
+
+    </trajectory>
+
+  </script>
+
+</actor>
+
+
+<!-- ================================ -->
+<!-- WALKING HUMAN 2                  -->
+<!-- CROSSES WP2 -> WP3 ROUTE         -->
+<!-- ================================ -->
+
+<actor name="walking_person_2">
+
+  <pose>2.4 2.5 0 0 0 1.5708</pose>
+
+  <skin>
+    <filename>https://fuel.ignitionrobotics.org/1.0/Mingfei/models/actor/tip/files/meshes/walk.dae</filename>
+    <scale>1.0</scale>
+  </skin>
+
+  <animation name="walking">
+    <filename>https://fuel.ignitionrobotics.org/1.0/Mingfei/models/actor/tip/files/meshes/walk.dae</filename>
+    <scale>1.0</scale>
+    <interpolate_x>true</interpolate_x>
+  </animation>
+
+  <script>
+
+    <loop>true</loop>
+    <delay_start>2.0</delay_start>
+    <auto_start>true</auto_start>
+
+    <trajectory id="0" type="walking">
+
+      <waypoint>
+        <time>0.0</time>
+        <pose>2.4 1.5 0 0 0 1.5708</pose>
+      </waypoint>
+
+      <waypoint>
+        <time>5.0</time>
+        <pose>2.4 4.0 0 0 0 1.5708</pose>
+      </waypoint>
+
+      <waypoint>
+        <time>10.0</time>
+        <pose>2.4 1.5 0 0 0 -1.5708</pose>
+      </waypoint>
+
+    </trajectory>
+
+  </script>
+
+</actor>
+
+
+<!-- ================================ -->
+<!-- WALKING HUMAN 3                  -->
+<!-- CROSSES WP4 -> WP5 ROUTE         -->
+<!-- ================================ -->
+
+  <actor name="walking_person_3">
+
+    <pose>-2.5 -4.5 0 0 0 0</pose>
+
+    <skin>
+      <filename>https://fuel.ignitionrobotics.org/1.0/Mingfei/models/actor/tip/files/meshes/walk.dae</filename>
+      <scale>1.0</scale>
+    </skin>
+
+    <animation name="walking">
+      <filename>https://fuel.ignitionrobotics.org/1.0/Mingfei/models/actor/tip/files/meshes/walk.dae</filename>
+      <scale>1.0</scale>
+      <interpolate_x>true</interpolate_x>
+    </animation>
+
+    <script>
+
+      <loop>true</loop>
+      <delay_start>4.0</delay_start>
+      <auto_start>true</auto_start>
+
+      <trajectory id="0" type="walking">
+
+        <waypoint>
+          <time>0.0</time>
+          <pose>-3.8 -4.5 0 0 0 0</pose>
+        </waypoint>
+
+        <waypoint>
+          <time>5.0</time>
+          <pose>-1.2 -4.5 0 0 0 0</pose>
+        </waypoint>
+
+        <waypoint>
+          <time>10.0</time>
+          <pose>-3.8 -4.5 0 0 0 3.14159</pose>
+        </waypoint>
+
+      </trajectory>
+
+    </script>
+
+  </actor>
+
+
+  </world>
+
+</sdf>

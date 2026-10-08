@@ -1,0 +1,422 @@
+version: 1
+defaults:
+  seed: 2404
+  baseline_sec: 15.0
+  recovery_sec: 20.0
+  use_sim_time: true
+
+scenarios:
+  healthy_stationary:
+    sensor: none
+    fault_mode: none
+    start_time: 0.0
+    duration: 60.0
+    motion: {type: stationary, linear_x: 0.0, angular_z: 0.0}
+    expected_evidence_pattern: all_available_relations_consistent
+    expected_attribution_category: SYSTEM_HEALTHY
+  healthy_straight_slow:
+    sensor: none
+    fault_mode: none
+    start_time: 0.0
+    duration: 60.0
+    motion: {type: straight_slow, linear_x: 0.08, angular_z: 0.0}
+    expected_evidence_pattern: all_available_relations_consistent
+    expected_attribution_category: SYSTEM_HEALTHY
+  healthy_straight_fast:
+    sensor: none
+    fault_mode: none
+    start_time: 0.0
+    duration: 60.0
+    motion: {type: straight_fast, linear_x: 0.20, angular_z: 0.0}
+    expected_evidence_pattern: all_available_relations_consistent
+    expected_attribution_category: SYSTEM_HEALTHY
+  healthy_gentle_left:
+    sensor: none
+    fault_mode: none
+    start_time: 0.0
+    duration: 60.0
+    motion: {type: gentle_left, linear_x: 0.10, angular_z: 0.15}
+    expected_evidence_pattern: all_available_relations_consistent
+    expected_attribution_category: SYSTEM_HEALTHY
+  healthy_gentle_right:
+    sensor: none
+    fault_mode: none
+    start_time: 0.0
+    duration: 60.0
+    motion: {type: gentle_right, linear_x: 0.10, angular_z: -0.15}
+    expected_evidence_pattern: all_available_relations_consistent
+    expected_attribution_category: SYSTEM_HEALTHY
+  healthy_sharp_left:
+    sensor: none
+    fault_mode: none
+    start_time: 0.0
+    duration: 45.0
+    motion: {type: sharp_left, linear_x: 0.06, angular_z: 0.50}
+    expected_evidence_pattern: quantified_turning_residuals
+    expected_attribution_category: SYSTEM_HEALTHY
+  healthy_sharp_right:
+    sensor: none
+    fault_mode: none
+    start_time: 0.0
+    duration: 45.0
+    motion: {type: sharp_right, linear_x: 0.06, angular_z: -0.50}
+    expected_evidence_pattern: quantified_turning_residuals
+    expected_attribution_category: SYSTEM_HEALTHY
+  healthy_stop_start:
+    sensor: none
+    fault_mode: none
+    start_time: 0.0
+    duration: 90.0
+    motion: {type: stop_start, linear_x: 0.15, angular_z: 0.0}
+    expected_evidence_pattern: transient_behavior_quantified
+    expected_attribution_category: SYSTEM_HEALTHY
+  healthy_accel_decel:
+    sensor: none
+    fault_mode: none
+    start_time: 0.0
+    duration: 90.0
+    motion: {type: accel_decel, linear_x: 0.20, angular_z: 0.0}
+    expected_evidence_pattern: transient_behavior_quantified
+    expected_attribution_category: SYSTEM_HEALTHY
+  healthy_figure8:
+    sensor: none
+    fault_mode: none
+    start_time: 0.0
+    duration: 120.0
+    motion: {type: figure8, linear_x: 0.10, angular_z: 0.30}
+    expected_evidence_pattern: turning_behavior_quantified
+    expected_attribution_category: SYSTEM_HEALTHY
+  healthy_mixed:
+    sensor: none
+    fault_mode: none
+    start_time: 0.0
+    duration: 180.0
+    motion: {type: mixed, linear_x: 0.12, angular_z: 0.25}
+    expected_evidence_pattern: broad_calibration
+    expected_attribution_category: SYSTEM_HEALTHY
+  healthy_calibration_sweep:
+    sensor: none
+    fault_mode: none
+    start_time: 0.0
+    duration: 180.0
+    motion: {type: calibration_sweep}
+    expected_evidence_pattern: labeled_regime_calibration
+    expected_attribution_category: SYSTEM_HEALTHY_OR_QUANTIFIED_DEGRADED
+
+  gnss_step_5m:
+    sensor: gnss
+    fault_mode: step
+    parameters: {east_offset_m: 5.0}
+    start_time: 15.0
+    duration: 25.0
+    motion: {type: gentle_left, linear_x: 0.10, angular_z: 0.15}
+    expected_evidence_pattern: gnss_inconsistent_imu_consistent
+    expected_attribution_category: LIKELY_GNSS_FAULT
+    expected_severity: UNTRUSTED
+  gnss_drift_0p02:
+    sensor: gnss
+    fault_mode: drift
+    parameters: {drift_rate_east_mps: 0.02}
+    start_time: 15.0
+    duration: 120.0
+    motion: {type: straight_slow, linear_x: 0.08, angular_z: 0.0}
+    expected_evidence_pattern: empirical_detection_boundary
+    expected_attribution_category: LIKELY_GNSS_FAULT_OR_BELOW_THRESHOLD
+  gnss_drift_0p05:
+    sensor: gnss
+    fault_mode: drift
+    parameters: {drift_rate_east_mps: 0.05}
+    start_time: 15.0
+    duration: 90.0
+    motion: {type: straight_slow, linear_x: 0.08, angular_z: 0.0}
+    expected_evidence_pattern: gradual_gnss_divergence
+    expected_attribution_category: LIKELY_GNSS_FAULT
+  gnss_drift_0p10:
+    sensor: gnss
+    fault_mode: drift
+    parameters: {drift_rate_east_mps: 0.10}
+    start_time: 15.0
+    duration: 60.0
+    motion: {type: straight_slow, linear_x: 0.08, angular_z: 0.0}
+    expected_evidence_pattern: gradual_gnss_divergence
+    expected_attribution_category: LIKELY_GNSS_FAULT
+  gnss_noise_x3:
+    sensor: gnss
+    fault_mode: noise
+    parameters: {additional_noise_stddev_m: 3.0}
+    start_time: 15.0
+    duration: 45.0
+    motion: {type: gentle_left, linear_x: 0.10, angular_z: 0.15}
+    expected_evidence_pattern: gnss_variance_degradation
+    expected_attribution_category: LIKELY_GNSS_FAULT
+  gnss_freeze:
+    sensor: gnss
+    fault_mode: freeze
+    parameters: {freeze_timestamp: false}
+    start_time: 15.0
+    duration: 30.0
+    motion: {type: straight_slow, linear_x: 0.10, angular_z: 0.0}
+    expected_evidence_pattern: position_inconsistency_with_valid_time
+    expected_attribution_category: LIKELY_GNSS_FAULT
+  gnss_freeze_timestamp:
+    sensor: gnss
+    fault_mode: frozen_timestamp
+    parameters: {}
+    start_time: 15.0
+    duration: 10.0
+    motion: {type: straight_slow, linear_x: 0.10, angular_z: 0.0}
+    expected_evidence_pattern: invalid_synchronization_no_spatial_residual
+    expected_attribution_category: INSUFFICIENT_EVIDENCE
+  gnss_delay_50ms:
+    sensor: gnss
+    fault_mode: delay
+    parameters: {delay_sec: 0.05}
+    start_time: 15.0
+    duration: 30.0
+    motion: {type: gentle_left, linear_x: 0.10, angular_z: 0.15}
+    expected_evidence_pattern: within_or_near_sync_tolerance
+    expected_attribution_category: SYSTEM_HEALTHY_OR_DEGRADED
+  gnss_delay_100ms:
+    sensor: gnss
+    fault_mode: delay
+    parameters: {delay_sec: 0.10}
+    start_time: 15.0
+    duration: 30.0
+    motion: {type: gentle_left, linear_x: 0.10, angular_z: 0.15}
+    expected_evidence_pattern: measured_sync_error
+    expected_attribution_category: SYSTEM_HEALTHY_OR_DEGRADED
+  gnss_delay_250ms:
+    sensor: gnss
+    fault_mode: delay
+    parameters: {delay_sec: 0.25}
+    start_time: 15.0
+    duration: 30.0
+    motion: {type: gentle_left, linear_x: 0.10, angular_z: 0.15}
+    expected_evidence_pattern: invalid_synchronization_no_spatial_residual
+    expected_attribution_category: INSUFFICIENT_EVIDENCE
+  gnss_timestamp_jitter:
+    sensor: gnss
+    fault_mode: timestamp_jitter
+    parameters: {timestamp_jitter_sec: 0.08}
+    start_time: 15.0
+    duration: 30.0
+    motion: {type: gentle_left, linear_x: 0.10, angular_z: 0.15}
+    expected_evidence_pattern: bounded_sync_variation
+    expected_attribution_category: SYSTEM_HEALTHY_OR_DEGRADED
+  gnss_out_of_order:
+    sensor: gnss
+    fault_mode: out_of_order
+    parameters: {out_of_order_every_n: 5}
+    start_time: 15.0
+    duration: 20.0
+    motion: {type: straight_slow, linear_x: 0.10, angular_z: 0.0}
+    expected_evidence_pattern: explicit_OUT_OF_ORDER_rejection
+    expected_attribution_category: INSUFFICIENT_EVIDENCE
+  gnss_spike:
+    sensor: gnss
+    fault_mode: spike
+    parameters: {spike_every_n: 10, spike_east_m: 5.0}
+    start_time: 15.0
+    duration: 45.0
+    motion: {type: straight_slow, linear_x: 0.10, angular_z: 0.0}
+    expected_evidence_pattern: isolated_outliers_without_chatter
+    expected_attribution_category: SYSTEM_HEALTHY_OR_LIKELY_GNSS_FAULT
+  gnss_plausible_spoof:
+    sensor: gnss
+    fault_mode: plausible_spoof
+    parameters: {}
+    start_time: 0.0
+    duration: 70.0
+    motion: {type: straight_slow, linear_x: 0.10, angular_z: 0.0}
+    expected_evidence_pattern: smooth_gradual_divergence_and_recovery
+    expected_attribution_category: LIKELY_GNSS_FAULT
+
+  imu_bias_0p05:
+    sensor: imu
+    fault_mode: bias
+    parameters: {bias_radps: 0.05}
+    start_time: 15.0
+    duration: 45.0
+    motion: {type: gentle_left, linear_x: 0.10, angular_z: 0.15}
+    expected_evidence_pattern: empirical_detection_boundary
+    expected_attribution_category: LIKELY_IMU_FAULT_OR_BELOW_THRESHOLD
+  imu_bias_0p10:
+    sensor: imu
+    fault_mode: bias
+    parameters: {bias_radps: 0.10}
+    start_time: 15.0
+    duration: 45.0
+    motion: {type: gentle_left, linear_x: 0.10, angular_z: 0.15}
+    expected_evidence_pattern: imu_wheel_disagreement
+    expected_attribution_category: LIKELY_IMU_FAULT
+  imu_bias_0p20:
+    sensor: imu
+    fault_mode: bias
+    parameters: {bias_radps: 0.20}
+    start_time: 15.0
+    duration: 45.0
+    motion: {type: gentle_left, linear_x: 0.10, angular_z: 0.15,
+             reverse_period_sec: 7.5}
+    expected_evidence_pattern: imu_wheel_disagreement
+    expected_attribution_category: LIKELY_IMU_FAULT
+    expected_severity: DEGRADED
+  imu_drift:
+    sensor: imu
+    fault_mode: drift
+    parameters: {drift_rate_radps2: 0.01}
+    start_time: 15.0
+    duration: 45.0
+    motion: {type: gentle_left, linear_x: 0.10, angular_z: 0.15}
+    expected_evidence_pattern: gradual_imu_disagreement
+    expected_attribution_category: LIKELY_IMU_FAULT
+  imu_dropout:
+    sensor: imu
+    fault_mode: dropout
+    parameters: {dropout_every_n: 1}
+    start_time: 15.0
+    duration: 10.0
+    motion: {type: gentle_left, linear_x: 0.10, angular_z: 0.15}
+    expected_evidence_pattern: direct_imu_freshness_failure
+    expected_attribution_category: LIKELY_IMU_FAULT
+  imu_freeze:
+    sensor: imu
+    fault_mode: freeze
+    parameters: {}
+    start_time: 15.0
+    duration: 30.0
+    motion: {type: figure8, linear_x: 0.10, angular_z: 0.30}
+    expected_evidence_pattern: imu_wheel_disagreement
+    expected_attribution_category: LIKELY_IMU_FAULT
+  imu_spike:
+    sensor: imu
+    fault_mode: spike
+    parameters: {spike_radps: 1.0, spike_every_n: 20}
+    start_time: 15.0
+    duration: 30.0
+    motion: {type: gentle_left, linear_x: 0.10, angular_z: 0.15}
+    expected_evidence_pattern: isolated_outliers_without_chatter
+    expected_attribution_category: SYSTEM_HEALTHY_OR_LIKELY_IMU_FAULT
+
+  wheel_scale_1p05:
+    sensor: wheel
+    fault_mode: linear_scale
+    parameters: {linear_scale: 1.05}
+    start_time: 15.0
+    duration: 60.0
+    motion: {type: straight_fast, linear_x: 0.20, angular_z: 0.0}
+    expected_evidence_pattern: empirical_detection_boundary
+    expected_attribution_category: INSUFFICIENT_EVIDENCE_OR_LIKELY_ODOMETRY_FAULT
+  wheel_scale_1p10:
+    sensor: wheel
+    fault_mode: linear_scale
+    parameters: {linear_scale: 1.10}
+    start_time: 15.0
+    duration: 60.0
+    motion: {type: straight_fast, linear_x: 0.20, angular_z: 0.0}
+    expected_evidence_pattern: gnss_and_localization_share_odometry_disagreement
+    expected_attribution_category: INSUFFICIENT_EVIDENCE
+  wheel_yaw_bias:
+    sensor: wheel
+    fault_mode: yaw_bias
+    parameters: {yaw_bias_radps: 0.20}
+    start_time: 15.0
+    duration: 45.0
+    motion: {type: gentle_left, linear_x: 0.10, angular_z: 0.15}
+    expected_evidence_pattern: all_odometry_relations_inconsistent
+    expected_attribution_category: LIKELY_ODOMETRY_FAULT
+  wheel_slip:
+    sensor: wheel
+    fault_mode: slip
+    parameters: {slip_bias_mps: 0.10}
+    start_time: 15.0
+    duration: 20.0
+    motion: {type: straight_slow, linear_x: 0.10, angular_z: 0.0}
+    expected_evidence_pattern: linear_odometry_ambiguity
+    expected_attribution_category: INSUFFICIENT_EVIDENCE
+
+  gnss_plus_wheel_fault:
+    sensor: multi
+    fault_mode: combined
+    faults:
+      gnss: {mode: drift, drift_rate_east_mps: 0.05}
+      wheel: {mode: linear_scale, linear_scale: 1.10}
+    start_time: 15.0
+    duration: 60.0
+    motion: {type: straight_fast, linear_x: 0.20, angular_z: 0.0}
+    expected_evidence_pattern: multiple_inconsistencies
+    expected_attribution_category: INSUFFICIENT_EVIDENCE
+  gnss_dropout_plus_imu_bias:
+    sensor: multi
+    fault_mode: combined
+    faults:
+      gnss: {mode: dropout, dropout_every_n: 1}
+      imu: {mode: bias, bias_radps: 0.20}
+    start_time: 15.0
+    duration: 20.0
+    motion: {type: gentle_left, linear_x: 0.10, angular_z: 0.15}
+    expected_evidence_pattern: direct_gnss_failure_plus_imu_inconsistency
+    expected_attribution_category: INSUFFICIENT_EVIDENCE
+  gnss_fault_sensor_unavailable:
+    sensor: multi
+    fault_mode: combined
+    faults:
+      gnss: {mode: drift, drift_rate_east_mps: 0.10}
+      imu: {mode: dropout, dropout_every_n: 1}
+    start_time: 15.0
+    duration: 30.0
+    motion: {type: straight_slow, linear_x: 0.10, angular_z: 0.0}
+    expected_evidence_pattern: confidence_reduced_by_unavailable_sensor
+    expected_attribution_category: INSUFFICIENT_EVIDENCE
+  repeated_gnss_cycles:
+    sensor: gnss
+    fault_mode: step
+    parameters: {east_offset_m: 5.0}
+    cycles: 3
+    start_time: 15.0
+    duration: 12.0
+    recovery_between_cycles_sec: 15.0
+    motion: {type: gentle_left, linear_x: 0.10, angular_z: 0.15}
+    expected_evidence_pattern: repeated_gate_probation_no_flap
+    expected_attribution_category: LIKELY_GNSS_FAULT
+  preinit_gnss_5m:
+    sensor: gnss
+    fault_mode: step
+    parameters: {east_offset_m: 5.0}
+    activate_on_start: true
+    trusted_initialization: configured_anchor
+    start_time: 0.0
+    duration: 30.0
+    motion: {type: stationary, linear_x: 0.0, angular_z: 0.0}
+    expected_evidence_pattern: configured_anchor_rejects_initial_fix
+    expected_attribution_category: LIKELY_GNSS_FAULT
+  preinit_gnss_slow_offset:
+    sensor: gnss
+    fault_mode: step
+    parameters: {east_offset_m: 2.0}
+    activate_on_start: true
+    trusted_initialization: configured_anchor
+    start_time: 0.0
+    duration: 30.0
+    motion: {type: stationary, linear_x: 0.0, angular_z: 0.0}
+    expected_evidence_pattern: anchor_boundary_measured
+    expected_attribution_category: SYSTEM_HEALTHY_OR_LIKELY_GNSS_FAULT
+  preinit_odom_bias:
+    sensor: wheel
+    fault_mode: yaw_bias
+    parameters: {yaw_bias_radps: 0.20}
+    activate_on_start: true
+    start_time: 0.0
+    duration: 30.0
+    motion: {type: gentle_left, linear_x: 0.10, angular_z: 0.15}
+    expected_evidence_pattern: odometry_relations_inconsistent_from_start
+    expected_attribution_category: LIKELY_ODOMETRY_FAULT_OR_INSUFFICIENT_EVIDENCE
+
+  localization_covariance_degradation:
+    sensor: localization
+    fault_mode: covariance
+    automated: false
+    blocker: no operational/raw AMCL split; do not fabricate localization data
+    start_time: 15.0
+    duration: 30.0
+    expected_evidence_pattern: manual_or_future_isolated_experiment
+    expected_attribution_category: LIKELY_LOCALIZATION_FAULT

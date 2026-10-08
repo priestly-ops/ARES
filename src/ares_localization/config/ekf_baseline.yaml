@@ -1,0 +1,24 @@
+ekf_filter_node:
+  ros__parameters:
+    use_sim_time: true
+    frequency: 30.0
+    sensor_timeout: 0.2
+    two_d_mode: true
+    publish_tf: true
+    print_diagnostics: true
+    odom_frame: odom
+    base_link_frame: base_footprint
+    world_frame: odom
+    # Wheel-derived pose and twist are correlated: use only planar velocity.
+    odom0: /ares/odom
+    odom0_config: [false, false, false, false, false, false,
+                   true, true, false, false, false, false,
+                   false, false, false]
+    # Gazebo IMU orientation is world-referenced; avoid absolute yaw fusion.
+    # Fuse angular velocity only, independent of wheel-integrated heading.
+    imu0: /ares/imu
+    imu0_config: [false, false, false, false, false, false,
+                  false, false, false, false, false, true,
+                  false, false, false]
+    imu0_queue_size: 20
+    odom0_queue_size: 10

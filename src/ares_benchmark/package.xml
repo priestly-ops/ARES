@@ -1,0 +1,14 @@
+<?xml version="1.0"?>
+<package format="3">
+  <name>ares_benchmark</name><version>0.1.0</version>
+  <description>Platform-neutral health validation and fixed navigation benchmark.</description>
+  <maintainer email="priestly@example.com">Priestly</maintainer><license>Apache-2.0</license>
+  <buildtool_depend>ament_cmake</buildtool_depend>
+  <exec_depend>rclpy</exec_depend><exec_depend>nav2_msgs</exec_depend>
+  <exec_depend>nav_msgs</exec_depend><exec_depend>sensor_msgs</exec_depend>
+  <exec_depend>geometry_msgs</exec_depend><exec_depend>rosgraph_msgs</exec_depend>
+  <exec_depend>lifecycle_msgs</exec_depend><exec_depend>tf2_ros</exec_depend><exec_depend>tf2_msgs</exec_depend>
+  <exec_depend>python3-yaml</exec_depend><exec_depend>ament_index_python</exec_depend>
+  <exec_depend>rosbag2_transport</exec_depend>
+  <export><build_type>ament_cmake</build_type></export>
+</package>

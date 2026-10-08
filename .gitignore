@@ -1,0 +1,43 @@
+# ROS 2 / colcon
+/build/
+/install/
+/log/
+
+# Python
+__pycache__/
+*.pyc
+.pytest_cache/
+.mypy_cache/
+.ruff_cache/
+.venv/
+venv/
+
+# ROS recordings and diagnostics
+*.db3
+*.mcap
+*.bag
+*.bag.active
+*.lz4
+*.zstd
+
+# Large generated data
+*.npy
+*.npz
+*.pt
+*.pth
+*.onnx
+
+# Secrets and local configuration
+.env
+.env.*
+!.env.example
+*.pem
+*.key
+*credentials*
+*secret*
+
+# Editor / OS
+.vscode/
+.idea/
+.DS_Store
+Thumbs.db

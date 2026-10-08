@@ -1,0 +1,880 @@
+<?xml version="1.0"?>
+
+<sdf version="1.10">
+
+  <model name="ares_jackal">
+
+    <pose>0 0 0 0 0 0</pose>
+
+    <!-- ===================================================== -->
+    <!-- CHASSIS                                               -->
+    <!-- ===================================================== -->
+
+    <link name="chassis_link">
+
+      <pose>0 0 0.18 0 0 0</pose>
+
+      <inertial>
+        <mass>16.523</mass>
+
+        <inertia>
+          <ixx>0.3136</ixx>
+          <iyy>0.3922</iyy>
+          <izz>0.4485</izz>
+          <ixy>0</ixy>
+          <ixz>0</ixz>
+          <iyz>0</iyz>
+        </inertia>
+      </inertial>
+
+      <collision name="chassis_collision">
+
+        <geometry>
+          <box>
+            <size>0.420 0.310 0.184</size>
+          </box>
+        </geometry>
+
+      </collision>
+
+      <visual name="chassis_visual">
+
+        <geometry>
+          <box>
+            <size>0.420 0.310 0.184</size>
+          </box>
+        </geometry>
+
+        <material>
+          <ambient>0.25 0.25 0.25 1</ambient>
+          <diffuse>0.25 0.25 0.25 1</diffuse>
+        </material>
+
+      </visual>
+
+    </link>
+
+
+    <!-- ===================================================== -->
+    <!-- IMU                                                   -->
+    <!-- ===================================================== -->
+
+    <link name="imu_link">
+
+      <!-- 10 cm above chassis frame -->
+      <pose relative_to="chassis_link">
+        0 0 0.10 0 0 0
+      </pose>
+
+      <inertial>
+        <mass>0.05</mass>
+
+        <inertia>
+          <ixx>0.0001</ixx>
+          <iyy>0.0001</iyy>
+          <izz>0.0001</izz>
+          <ixy>0</ixy>
+          <ixz>0</ixz>
+          <iyz>0</iyz>
+        </inertia>
+      </inertial>
+
+      <visual name="imu_visual">
+
+        <geometry>
+          <box>
+            <size>0.04 0.03 0.02</size>
+          </box>
+        </geometry>
+
+        <material>
+          <ambient>0.10 0.20 0.80 1</ambient>
+          <diffuse>0.10 0.20 0.80 1</diffuse>
+        </material>
+
+      </visual>
+
+      <sensor name="ares_imu" type="imu">
+
+        <always_on>true</always_on>
+        <update_rate>100</update_rate>
+
+        <topic>/ares/imu</topic>
+
+        <!-- Clean frame ID -->
+        <frame_id>imu_link</frame_id>
+
+        <imu>
+
+          <angular_velocity>
+
+            <x>
+              <noise type="gaussian">
+                <mean>0</mean>
+                <stddev>0.0002</stddev>
+              </noise>
+            </x>
+
+            <y>
+              <noise type="gaussian">
+                <mean>0</mean>
+                <stddev>0.0002</stddev>
+              </noise>
+            </y>
+
+            <z>
+              <noise type="gaussian">
+                <mean>0</mean>
+                <stddev>0.0002</stddev>
+              </noise>
+            </z>
+
+          </angular_velocity>
+
+          <linear_acceleration>
+
+            <x>
+              <noise type="gaussian">
+                <mean>0</mean>
+                <stddev>0.01</stddev>
+              </noise>
+            </x>
+
+            <y>
+              <noise type="gaussian">
+                <mean>0</mean>
+                <stddev>0.01</stddev>
+              </noise>
+            </y>
+
+            <z>
+              <noise type="gaussian">
+                <mean>0</mean>
+                <stddev>0.01</stddev>
+              </noise>
+            </z>
+
+          </linear_acceleration>
+
+        </imu>
+
+      </sensor>
+
+    </link>
+
+
+    <joint name="imu_joint" type="fixed">
+
+      <parent>chassis_link</parent>
+      <child>imu_link</child>
+
+    </joint>
+
+
+    <!-- ===================================================== -->
+    <!-- 360 DEGREE LIDAR                                      -->
+    <!-- ===================================================== -->
+
+    <link name="lidar_link">
+
+      <!-- front/top of chassis -->
+      <pose relative_to="chassis_link">
+        0.10 0 0.22 0 0 0
+      </pose>
+
+      <inertial>
+        <mass>0.5</mass>
+
+        <inertia>
+          <ixx>0.001</ixx>
+          <iyy>0.001</iyy>
+          <izz>0.001</izz>
+          <ixy>0</ixy>
+          <ixz>0</ixz>
+          <iyz>0</iyz>
+        </inertia>
+      </inertial>
+
+      <visual name="lidar_visual">
+
+        <geometry>
+          <cylinder>
+            <radius>0.045</radius>
+            <length>0.06</length>
+          </cylinder>
+        </geometry>
+
+        <material>
+          <ambient>0.15 0.15 0.15 1</ambient>
+          <diffuse>0.15 0.15 0.15 1</diffuse>
+        </material>
+
+      </visual>
+
+      <sensor name="ares_lidar" type="gpu_lidar">
+
+        <always_on>true</always_on>
+        <update_rate>5</update_rate>
+
+        <topic>/ares/scan</topic>
+
+        <!-- Clean frame ID -->
+        <frame_id>lidar_link</frame_id>
+
+        <lidar>
+
+          <scan>
+
+            <horizontal>
+
+              <!-- 360 points = approximately 1 degree each -->
+              <samples>360</samples>
+
+              <resolution>1</resolution>
+
+              <min_angle>-3.14159265359</min_angle>
+              <max_angle>3.14159265359</max_angle>
+
+            </horizontal>
+
+          </scan>
+
+          <range>
+
+            <min>0.12</min>
+            <max>20.0</max>
+            <resolution>0.01</resolution>
+
+          </range>
+
+          <noise>
+            <type>gaussian</type>
+            <mean>0.0</mean>
+            <stddev>0.01</stddev>
+          </noise>
+
+        </lidar>
+
+      </sensor>
+
+    </link>
+
+
+    <joint name="lidar_joint" type="fixed">
+
+      <parent>chassis_link</parent>
+      <child>lidar_link</child>
+
+    </joint>
+
+
+    <!-- ===================================================== -->
+    <!-- RGB-D CAMERA                                          -->
+    <!-- ===================================================== -->
+
+    <link name="camera_link">
+
+      <!-- front/top of chassis -->
+      <pose relative_to="chassis_link">
+        0.20 0 0.12 0 0 0
+      </pose>
+
+      <inertial>
+        <mass>0.15</mass>
+
+        <inertia>
+          <ixx>0.0002</ixx>
+          <iyy>0.0002</iyy>
+          <izz>0.0002</izz>
+          <ixy>0</ixy>
+          <ixz>0</ixz>
+          <iyz>0</iyz>
+        </inertia>
+      </inertial>
+
+      <visual name="camera_visual">
+
+        <geometry>
+          <box>
+            <size>0.06 0.10 0.04</size>
+          </box>
+        </geometry>
+
+        <material>
+          <ambient>0.10 0.10 0.10 1</ambient>
+          <diffuse>0.10 0.10 0.10 1</diffuse>
+        </material>
+
+      </visual>
+
+      <sensor name="ares_depth_camera"
+              type="depth_camera">
+
+        <always_on>false</always_on>
+        <update_rate>5</update_rate>
+
+        <topic>/ares/camera</topic>
+
+        <!-- Clean frame ID -->
+        <frame_id>camera_link</frame_id>
+
+        <camera>
+
+          <horizontal_fov>1.047</horizontal_fov>
+
+          <image>
+            <width>320</width>
+            <height>240</height>
+            <format>R8G8B8</format>
+          </image>
+
+          <clip>
+            <near>0.10</near>
+            <far>10.0</far>
+          </clip>
+
+          <depth_camera>
+
+            <clip>
+              <near>0.10</near>
+              <far>10.0</far>
+            </clip>
+
+          </depth_camera>
+
+        </camera>
+
+      </sensor>
+
+    </link>
+
+
+    <joint name="camera_joint" type="fixed">
+
+      <parent>chassis_link</parent>
+      <child>camera_link</child>
+
+    </joint>
+
+
+    <!-- ===================================================== -->
+    <!-- GNSS                                                  -->
+    <!-- ===================================================== -->
+
+    <link name="gps_link">
+
+      <!-- rear/top -->
+      <pose relative_to="chassis_link">
+        -0.15 0 0.14 0 0 0
+      </pose>
+
+      <inertial>
+
+        <mass>0.10</mass>
+
+        <inertia>
+          <ixx>0.0001</ixx>
+          <iyy>0.0001</iyy>
+          <izz>0.0001</izz>
+          <ixy>0</ixy>
+          <ixz>0</ixz>
+          <iyz>0</iyz>
+        </inertia>
+
+      </inertial>
+
+      <visual name="gps_visual">
+
+        <geometry>
+          <box>
+            <size>0.06 0.06 0.025</size>
+          </box>
+        </geometry>
+
+        <material>
+          <ambient>0.10 0.80 0.10 1</ambient>
+          <diffuse>0.10 0.80 0.10 1</diffuse>
+        </material>
+
+      </visual>
+
+      <sensor name="ares_gnss" type="navsat">
+        <always_on>true</always_on>
+        <update_rate>10</update_rate>
+        <topic>/ares/gps</topic>
+        <frame_id>gps_link</frame_id>
+
+        <navsat>
+          <position_sensing>
+            <horizontal>
+              <noise type="gaussian">
+                <mean>0</mean>
+                <stddev>0.0000045</stddev>
+              </noise>
+            </horizontal>
+
+            <vertical>
+              <noise type="gaussian">
+                <mean>0</mean>
+                <stddev>1.0</stddev>
+              </noise>
+            </vertical>
+          </position_sensing>
+
+          <velocity_sensing>
+            <horizontal>
+              <noise type="gaussian">
+                <mean>0</mean>
+                <stddev>0.05</stddev>
+              </noise>
+            </horizontal>
+
+            <vertical>
+              <noise type="gaussian">
+                <mean>0</mean>
+                <stddev>0.10</stddev>
+              </noise>
+            </vertical>
+          </velocity_sensing>
+        </navsat>
+      </sensor>
+
+    </link>
+
+
+    <joint name="gps_joint" type="fixed">
+
+      <parent>chassis_link</parent>
+      <child>gps_link</child>
+
+    </joint>
+
+
+    <!-- ===================================================== -->
+    <!-- FRONT LEFT WHEEL                                      -->
+    <!-- ===================================================== -->
+
+    <link name="front_left_wheel_link">
+
+      <pose>
+        0.131 0.187795 0.098 0 0 0
+      </pose>
+
+      <inertial>
+
+        <mass>0.477</mass>
+
+        <inertia>
+          <ixx>0.0013</ixx>
+          <iyy>0.0024</iyy>
+          <izz>0.0013</izz>
+          <ixy>0</ixy>
+          <ixz>0</ixz>
+          <iyz>0</iyz>
+        </inertia>
+
+      </inertial>
+
+      <collision name="collision">
+
+        <!-- Only geometry is rotated.
+             The wheel link itself remains unrotated. -->
+
+        <pose>
+          0 0 0 1.57079632679 0 0
+        </pose>
+
+        <geometry>
+
+          <cylinder>
+            <radius>0.098</radius>
+            <length>0.040</length>
+          </cylinder>
+
+        </geometry>
+
+      </collision>
+
+      <visual name="visual">
+
+        <pose>
+          0 0 0 1.57079632679 0 0
+        </pose>
+
+        <geometry>
+
+          <cylinder>
+            <radius>0.098</radius>
+            <length>0.040</length>
+          </cylinder>
+
+        </geometry>
+
+        <material>
+          <ambient>0.05 0.05 0.05 1</ambient>
+          <diffuse>0.05 0.05 0.05 1</diffuse>
+        </material>
+
+      </visual>
+
+    </link>
+
+
+    <!-- ===================================================== -->
+    <!-- FRONT RIGHT WHEEL                                     -->
+    <!-- ===================================================== -->
+
+    <link name="front_right_wheel_link">
+
+      <pose>
+        0.131 -0.187795 0.098 0 0 0
+      </pose>
+
+      <inertial>
+
+        <mass>0.477</mass>
+
+        <inertia>
+          <ixx>0.0013</ixx>
+          <iyy>0.0024</iyy>
+          <izz>0.0013</izz>
+          <ixy>0</ixy>
+          <ixz>0</ixz>
+          <iyz>0</iyz>
+        </inertia>
+
+      </inertial>
+
+      <collision name="collision">
+
+        <pose>
+          0 0 0 1.57079632679 0 0
+        </pose>
+
+        <geometry>
+
+          <cylinder>
+            <radius>0.098</radius>
+            <length>0.040</length>
+          </cylinder>
+
+        </geometry>
+
+      </collision>
+
+      <visual name="visual">
+
+        <pose>
+          0 0 0 1.57079632679 0 0
+        </pose>
+
+        <geometry>
+
+          <cylinder>
+            <radius>0.098</radius>
+            <length>0.040</length>
+          </cylinder>
+
+        </geometry>
+
+        <material>
+          <ambient>0.05 0.05 0.05 1</ambient>
+          <diffuse>0.05 0.05 0.05 1</diffuse>
+        </material>
+
+      </visual>
+
+    </link>
+
+
+    <!-- ===================================================== -->
+    <!-- REAR LEFT WHEEL                                       -->
+    <!-- ===================================================== -->
+
+    <link name="rear_left_wheel_link">
+
+      <pose>
+        -0.131 0.187795 0.098 0 0 0
+      </pose>
+
+      <inertial>
+
+        <mass>0.477</mass>
+
+        <inertia>
+          <ixx>0.0013</ixx>
+          <iyy>0.0024</iyy>
+          <izz>0.0013</izz>
+          <ixy>0</ixy>
+          <ixz>0</ixz>
+          <iyz>0</iyz>
+        </inertia>
+
+      </inertial>
+
+      <collision name="collision">
+
+        <pose>
+          0 0 0 1.57079632679 0 0
+        </pose>
+
+        <geometry>
+
+          <cylinder>
+            <radius>0.098</radius>
+            <length>0.040</length>
+          </cylinder>
+
+        </geometry>
+
+      </collision>
+
+      <visual name="visual">
+
+        <pose>
+          0 0 0 1.57079632679 0 0
+        </pose>
+
+        <geometry>
+
+          <cylinder>
+            <radius>0.098</radius>
+            <length>0.040</length>
+          </cylinder>
+
+        </geometry>
+
+        <material>
+          <ambient>0.05 0.05 0.05 1</ambient>
+          <diffuse>0.05 0.05 0.05 1</diffuse>
+        </material>
+
+      </visual>
+
+    </link>
+
+
+    <!-- ===================================================== -->
+    <!-- REAR RIGHT WHEEL                                      -->
+    <!-- ===================================================== -->
+
+    <link name="rear_right_wheel_link">
+
+      <pose>
+        -0.131 -0.187795 0.098 0 0 0
+      </pose>
+
+      <inertial>
+
+        <mass>0.477</mass>
+
+        <inertia>
+          <ixx>0.0013</ixx>
+          <iyy>0.0024</iyy>
+          <izz>0.0013</izz>
+          <ixy>0</ixy>
+          <ixz>0</ixz>
+          <iyz>0</iyz>
+        </inertia>
+
+      </inertial>
+
+      <collision name="collision">
+
+        <pose>
+          0 0 0 1.57079632679 0 0
+        </pose>
+
+        <geometry>
+
+          <cylinder>
+            <radius>0.098</radius>
+            <length>0.040</length>
+          </cylinder>
+
+        </geometry>
+
+      </collision>
+
+      <visual name="visual">
+
+        <pose>
+          0 0 0 1.57079632679 0 0
+        </pose>
+
+        <geometry>
+
+          <cylinder>
+            <radius>0.098</radius>
+            <length>0.040</length>
+          </cylinder>
+
+        </geometry>
+
+        <material>
+          <ambient>0.05 0.05 0.05 1</ambient>
+          <diffuse>0.05 0.05 0.05 1</diffuse>
+        </material>
+
+      </visual>
+
+    </link>
+
+
+    <!-- ===================================================== -->
+    <!-- WHEEL JOINTS                                          -->
+    <!-- ===================================================== -->
+
+    <joint name="front_left_wheel_joint"
+           type="revolute">
+
+      <parent>chassis_link</parent>
+      <child>front_left_wheel_link</child>
+
+      <axis>
+
+        <xyz>0 1 0</xyz>
+
+        <dynamics>
+          <damping>0.05</damping>
+        </dynamics>
+
+      </axis>
+
+    </joint>
+
+
+    <joint name="front_right_wheel_joint"
+           type="revolute">
+
+      <parent>chassis_link</parent>
+      <child>front_right_wheel_link</child>
+
+      <axis>
+
+        <xyz>0 1 0</xyz>
+
+        <dynamics>
+          <damping>0.05</damping>
+        </dynamics>
+
+      </axis>
+
+    </joint>
+
+
+    <joint name="rear_left_wheel_joint"
+           type="revolute">
+
+      <parent>chassis_link</parent>
+      <child>rear_left_wheel_link</child>
+
+      <axis>
+
+        <xyz>0 1 0</xyz>
+
+        <dynamics>
+          <damping>0.05</damping>
+        </dynamics>
+
+      </axis>
+
+    </joint>
+
+
+    <joint name="rear_right_wheel_joint"
+           type="revolute">
+
+      <parent>chassis_link</parent>
+      <child>rear_right_wheel_link</child>
+
+      <axis>
+
+        <xyz>0 1 0</xyz>
+
+        <dynamics>
+          <damping>0.05</damping>
+        </dynamics>
+
+      </axis>
+
+    </joint>
+
+
+    <!-- ===================================================== -->
+    <!-- DIFFERENTIAL DRIVE                                    -->
+    <!-- ===================================================== -->
+
+    <plugin
+      filename="gz-sim-diff-drive-system"
+      name="gz::sim::systems::DiffDrive">
+
+      <!-- LEFT SIDE -->
+
+      <left_joint>
+        front_left_wheel_joint
+      </left_joint>
+
+      <left_joint>
+        rear_left_wheel_joint
+      </left_joint>
+
+
+      <!-- RIGHT SIDE -->
+
+      <right_joint>
+        front_right_wheel_joint
+      </right_joint>
+
+      <right_joint>
+        rear_right_wheel_joint
+      </right_joint>
+
+
+      <!-- JACKAL GEOMETRY -->
+
+      <wheel_separation>
+        0.37559
+      </wheel_separation>
+
+      <wheel_radius>
+        0.098
+      </wheel_radius>
+
+
+      <!-- COMMAND -->
+
+      <topic>
+        /ares/cmd_vel
+      </topic>
+
+
+      <!-- ODOMETRY -->
+
+      <odom_topic>
+        /ares/odom
+      </odom_topic>
+
+      <!-- Gazebo transform stream -->
+      <tf_topic>
+        /ares/tf
+      </tf_topic>
+
+      <!-- Clean TF / odometry frame names -->
+      <frame_id>
+        odom
+      </frame_id>
+
+      <child_frame_id>
+        base_footprint
+      </child_frame_id>
+
+      <odom_publish_frequency>
+        50
+      </odom_publish_frequency>
+
+    </plugin>
+
+  </model>
+
+</sdf>

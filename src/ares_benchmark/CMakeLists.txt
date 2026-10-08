@@ -1,0 +1,8 @@
+cmake_minimum_required(VERSION 3.10)
+project(ares_benchmark)
+find_package(ament_cmake REQUIRED)
+install(PROGRAMS scripts/healthy_mission.py DESTINATION lib/${PROJECT_NAME} RENAME healthy_mission)
+install(PROGRAMS scripts/health_check DESTINATION lib/${PROJECT_NAME})
+install(FILES scripts/healthy_mission.py DESTINATION lib/${PROJECT_NAME})
+install(DIRECTORY config DESTINATION share/${PROJECT_NAME})
+ament_package()

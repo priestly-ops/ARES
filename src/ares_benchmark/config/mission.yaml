@@ -1,0 +1,21 @@
+# Existing map: spawn world (0,-7,+pi/2) corresponds approximately to map (0,0,0).
+map_frame: map
+base_frame: base_footprint
+initial_pose: [0.0, 0.0, 0.0]
+waypoints:
+  - [2.0, 0.0, 0.0]
+  - [6.0, -2.0, 0.0]
+  - [6.0, 2.0, 1.57079632679]
+readiness_timeout_wall: 120.0
+goal_timeout_wall: 240.0
+sample_seconds_wall: 15.0
+min_rtf: 0.5
+rate_tolerance_fraction: 0.25
+max_goal_error_m: 0.30
+max_goal_yaw_error_rad: 0.35
+sensors:
+  /ares/scan: {rate: 5.0, frame: lidar_link, type: scan}
+  /ares/imu: {rate: 100.0, frame: imu_link, type: imu}
+  /ares/odom: {rate: 50.0, frame: odom, child: base_footprint, type: odom}
+  /odometry/filtered: {rate: 30.0, frame: odom, child: base_footprint, type: odom}
+lifecycle_nodes: [map_server, amcl, planner_server, controller_server, behavior_server, bt_navigator, global_costmap/global_costmap, local_costmap/local_costmap]

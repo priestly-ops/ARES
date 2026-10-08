@@ -1,0 +1,97 @@
+# Week 4 starts from the accepted Week 3 thresholds. These are calibrated
+# experimental defaults, not claims of optimality. Retuning requires the
+# healthy-motion calibration report produced by analyze_week4_results.
+gnss_monitor:
+  gnss_topic: /ares/gps
+  # Gazebo's spherical heading=0 maps world X to north. The -90 degree
+  # ENU rotation makes GNSS (east,north) compatible with wheel (x,y).
+  # Operational wheel odometry avoids the filtered EKF's velocity-integration
+  # drift observed during the Week 4 healthy calibration sweep.
+  odometry_topic: /ares/odom_operational
+  gnss_to_odom_yaw_deg: -90.0
+  window_size: 5
+  healthy_threshold_m: 1.5
+  fault_threshold_m: 3.0
+  required_consecutive: 5
+  gnss_timeout_sec: 1.0
+  dropout_check_period_sec: 0.2
+  diagnostic_log_every_n: 10
+  max_sync_error_sec: 0.15
+  history_duration_sec: 5.0
+  interpolate_odometry: false
+  expected_odometry_rate_hz: 50.0
+  degraded_exit_m: 2.0
+  healthy_exit_m: 1.2
+  degrade_persistence: 5
+  untrusted_persistence: 5
+  recovery_persistence: 10
+  # Calibrated from the accepted healthy stationary/calibration sweep. A 2 s
+  # window with 0.5 s persistence produced zero confirmed false freezes across
+  # stationary, straight, turning, stop/start, and accel/decel regimes.
+  freeze_window_sec: 2.0
+  freeze_minimum_motion_m: 0.2
+  freeze_maximum_gnss_displacement_m: 0.15
+  freeze_confirmation_sec: 0.5
+  freeze_detection_enabled: true
+  initialization_mode: relative
+  trusted_reference_latitude: 39.7392
+  trusted_reference_longitude: -104.9903
+  max_initial_reference_error_m: 2.5
+
+imu_monitor:
+  imu_topic: /ares/imu_operational
+  odometry_topic: /ares/odom_operational
+  # Two bounded healthy sweeps measured a repeatable 0.60 chassis-to-wheel
+  # yaw-rate ratio across gentle, sharp, and figure-eight regimes. Comparing
+  # against the calibrated expectation preserves additive IMU-fault sensitivity.
+  odometry_yaw_rate_scale: 0.60
+  max_sync_error_sec: 0.05
+  history_duration_sec: 2.0
+  interpolate_odometry: true
+  expected_odometry_rate_hz: 50.0
+  startup_grace_sec: 1.0
+  imu_timeout_sec: 0.25
+  window_size: 20
+  degraded_enter_radps: 0.15
+  untrusted_enter_radps: 0.40
+  degraded_exit_radps: 0.25
+  healthy_exit_radps: 0.10
+  degrade_persistence: 10
+  untrusted_persistence: 10
+  recovery_persistence: 30
+
+localization_monitor:
+  localization_topic: /amcl_pose
+  odometry_topic: /ares/odom_operational
+  map_frame: map
+  odom_frame: odom
+  max_sync_error_sec: 0.20
+  history_duration_sec: 5.0
+  expected_odometry_rate_hz: 50.0
+  localization_timeout_sec: 2.0
+  startup_grace_sec: 2.0
+  tf_timeout_sec: 0.1
+  window_size: 5
+  degraded_enter_m: 0.20
+  untrusted_enter_m: 0.75
+  degraded_exit_m: 0.40
+  healthy_exit_m: 0.10
+  degrade_persistence: 5
+  untrusted_persistence: 5
+  recovery_persistence: 10
+
+recovery_manager:
+  degraded_covariance_factor: 10.0
+  untrusted_covariance_factor: 100.0
+  untrusted_observations_before_gate: 5
+  probation_observations: 20
+  probation_covariance_factor: 5.0
+  probation_high_covariance_observations: 10
+  probation_high_covariance_factor: 10.0
+
+gnss_trusted_proxy:
+  input_topic: /ares/gps
+  output_topic: /ares/gps_trusted
+  unknown_variance_m2: 1.0
+  max_message_age_sec: 0.5
+  future_tolerance_sec: 0.05

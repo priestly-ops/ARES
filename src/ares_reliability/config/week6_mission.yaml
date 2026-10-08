@@ -1,0 +1,61 @@
+version: 1
+mission_id: week6_warehouse_v1
+map_frame: map
+odom_frame: odom
+base_frame: base_footprint
+initial_pose: [0.0, 0.0, 0.0]
+
+# Gazebo world -> mission map calibration. The robot spawns at world
+# (0, -7, +pi/2), corresponding to map (0, 0, 0).
+ground_truth_child_frame: ares_jackal
+ground_truth_world_origin: [0.0, -7.0, 1.5707963267948966]
+
+# The first three goals extend the previously accepted Week 1 route. The
+# return leg adds both turn directions and continued motion after the fault
+# window without changing the world or Nav2 tuning.
+waypoints:
+  - [2.0, 0.0, 0.0]
+  - [6.0, -2.0, 0.0]
+  - [6.0, 2.0, 1.5707963267948966]
+  - [3.0, 2.0, 3.141592653589793]
+  - [2.0, 0.0, -1.5707963267948966]
+
+readiness_timeout_wall_sec: 120.0
+readiness_settle_sim_sec: 5.0
+# Fair, deterministic startup requirements. These use simulation time and the
+# localization stream only; ground truth is recorded after the decision and
+# never controls readiness. A fixed history requirement avoids selecting an
+# unusually quiet (or "lucky") GNSS window.
+readiness_min_sim_time_sec: 20.0
+readiness_min_localization_samples: 50
+readiness_min_history_sim_sec: 5.0
+goal_timeout_wall_sec: 240.0
+post_mission_observation_sim_sec: 3.0
+waypoint_dwell_sim_sec: 1.0
+
+# A 10 Hz controller nominally publishes every 0.10 s. A 0.35 s gap is more
+# than three expected periods. It is applied only while a goal is active;
+# waypoint dwell and terminal stops are excluded.
+controller_expected_rate_hz: 10.0
+controller_gap_threshold_sec: 0.35
+
+# These are inherited acceptance limits, not Week 6 fault-result tuning.
+waypoint_xy_tolerance_m: 0.30
+waypoint_yaw_tolerance_rad: 0.35
+
+# Fault timing is relative to the first accepted navigation goal and therefore
+# occurs during established motion, not during startup. The duration matches
+# the frozen Week 5 +5 m profile.
+faults:
+  healthy:
+    profile: none
+    onset_sim_sec: null
+    duration_sim_sec: 0.0
+  gnss_step_5m:
+    profile: gnss_step_5m
+    onset_sim_sec: 15.0
+    duration_sim_sec: 30.0
+    parameters:
+      enabled: true
+      mode: step
+      east_offset_m: 5.0

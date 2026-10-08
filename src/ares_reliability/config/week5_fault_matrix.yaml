@@ -1,0 +1,209 @@
+version: 1
+defaults:
+  seed: 2505
+  baseline_sec: 15.0
+  recovery_sec: 20.0
+  use_sim_time: true
+
+scenarios:
+  healthy_fusion:
+    sensor: none
+    fault_mode: none
+    start_time: 0.0
+    duration: 45.0
+    motion: {type: straight_slow, linear_x: 0.08, angular_z: 0.0, reverse_period_sec: 12.0}
+    expected_severity: HEALTHY
+    expected_evidence_pattern: stable_parallel_fusion
+    expected_attribution_category: SYSTEM_HEALTHY
+
+  healthy_freeze_motion:
+    sensor: none
+    fault_mode: none
+    start_time: 15.0
+    duration: 30.0
+    motion: {type: straight_slow, linear_x: 0.15, angular_z: 0.0}
+    expected_severity: HEALTHY
+    expected_evidence_pattern: freeze_trajectory_without_fault
+    expected_attribution_category: SYSTEM_HEALTHY
+
+  gnss_step_1m:
+    sensor: gnss
+    fault_mode: step
+    parameters: {east_offset_m: 1.0}
+    start_time: 15.0
+    duration: 30.0
+    motion: {type: straight_slow, linear_x: 0.08, angular_z: 0.0, reverse_period_sec: 12.0}
+    expected_severity: HEALTHY_OR_DEGRADED
+    expected_evidence_pattern: bounded_small_offset_response
+    expected_attribution_category: SYSTEM_HEALTHY_OR_LIKELY_GNSS_FAULT
+
+  gnss_step_3m:
+    sensor: gnss
+    fault_mode: step
+    parameters: {east_offset_m: 3.0}
+    start_time: 15.0
+    duration: 30.0
+    motion: {type: straight_slow, linear_x: 0.08, angular_z: 0.0, reverse_period_sec: 12.0}
+    expected_severity: DEGRADED_OR_UNTRUSTED
+    expected_evidence_pattern: covariance_deweighting_or_gate
+    expected_attribution_category: LIKELY_GNSS_FAULT
+
+  gnss_step_5m:
+    sensor: gnss
+    fault_mode: step
+    parameters: {east_offset_m: 5.0}
+    start_time: 15.0
+    duration: 30.0
+    motion: {type: straight_slow, linear_x: 0.08, angular_z: 0.0, reverse_period_sec: 12.0}
+    expected_severity: UNTRUSTED
+    expected_evidence_pattern: deweight_then_gate
+    expected_attribution_category: LIKELY_GNSS_FAULT
+
+  gnss_step_10m:
+    sensor: gnss
+    fault_mode: step
+    parameters: {east_offset_m: 10.0}
+    start_time: 15.0
+    duration: 30.0
+    motion: {type: straight_slow, linear_x: 0.08, angular_z: 0.0, reverse_period_sec: 12.0}
+    expected_severity: UNTRUSTED
+    expected_evidence_pattern: rapid_deweight_then_gate
+    expected_attribution_category: LIKELY_GNSS_FAULT
+
+  gnss_slow_drift:
+    sensor: gnss
+    fault_mode: drift
+    parameters: {drift_rate_east_mps: 0.05}
+    start_time: 15.0
+    duration: 90.0
+    motion: {type: straight_slow, linear_x: 0.08, angular_z: 0.0, reverse_period_sec: 12.0}
+    expected_severity: DEGRADED_OR_UNTRUSTED
+    expected_evidence_pattern: gradual_influence_reduction
+    expected_attribution_category: LIKELY_GNSS_FAULT
+
+  gnss_dropout:
+    sensor: gnss
+    fault_mode: dropout
+    parameters: {}
+    start_time: 15.0
+    duration: 30.0
+    motion: {type: straight_slow, linear_x: 0.08, angular_z: 0.0, reverse_period_sec: 12.0}
+    expected_severity: UNTRUSTED
+    expected_evidence_pattern: stale_detection_and_continued_dead_reckoning
+    expected_attribution_category: LIKELY_GNSS_FAULT
+
+  gnss_freeze:
+    sensor: gnss
+    fault_mode: freeze
+    parameters: {freeze_timestamp: false}
+    start_time: 15.0
+    duration: 30.0
+    motion: {type: straight_slow, linear_x: 0.15, angular_z: 0.0}
+    expected_severity: UNTRUSTED
+    expected_evidence_pattern: position_inconsistency_then_gate
+    expected_attribution_category: LIKELY_GNSS_FAULT
+
+  gnss_fault_recovery:
+    sensor: gnss
+    fault_mode: step
+    parameters: {east_offset_m: 5.0}
+    start_time: 15.0
+    duration: 30.0
+    motion: {type: gentle_left, linear_x: 0.08, angular_z: 0.12, reverse_period_sec: 12.0}
+    expected_severity: UNTRUSTED
+    expected_evidence_pattern: gate_probation_normal
+    expected_attribution_category: LIKELY_GNSS_FAULT
+
+  repeated_fault_recovery:
+    sensor: gnss
+    fault_mode: step
+    parameters: {east_offset_m: 5.0}
+    start_time: 15.0
+    duration: 20.0
+    cycles: 3
+    recovery_between_cycles_sec: 15.0
+    motion: {type: straight_slow, linear_x: 0.08, angular_z: 0.0, reverse_period_sec: 10.0}
+    expected_severity: UNTRUSTED
+    expected_evidence_pattern: repeated_gate_probation_without_flap
+    expected_attribution_category: LIKELY_GNSS_FAULT
+
+  preinit_gnss_5m:
+    sensor: gnss
+    fault_mode: step
+    parameters: {east_offset_m: 5.0}
+    activate_on_start: true
+    trusted_initialization: configured_anchor
+    start_time: 0.0
+    duration: 30.0
+    motion: {type: stationary, linear_x: 0.0, angular_z: 0.0}
+    expected_severity: UNTRUSTED
+    expected_evidence_pattern: reject_before_experimental_fusion
+    expected_attribution_category: LIKELY_GNSS_FAULT
+
+  covariance_normal:
+    sensor: gnss
+    fault_mode: step
+    parameters: {east_offset_m: 3.0}
+    recovery_parameters:
+      degraded_covariance_factor: 1.0
+      untrusted_covariance_factor: 1.0
+      probation_high_covariance_factor: 1.0
+      probation_covariance_factor: 1.0
+      untrusted_observations_before_gate: 100000
+    start_time: 15.0
+    duration: 30.0
+    motion: {type: stationary, linear_x: 0.0, angular_z: 0.0}
+    expected_severity: DEGRADED_OR_UNTRUSTED
+    expected_evidence_pattern: normal_covariance_influence
+    expected_attribution_category: LIKELY_GNSS_FAULT
+
+  covariance_step5:
+    sensor: gnss
+    fault_mode: step
+    parameters: {east_offset_m: 5.0}
+    recovery_parameters:
+      degraded_covariance_factor: 1.0
+      untrusted_covariance_factor: 1.0
+      probation_high_covariance_factor: 1.0
+      probation_covariance_factor: 1.0
+      untrusted_observations_before_gate: 100000
+    start_time: 15.0
+    duration: 30.0
+    motion: {type: straight_slow, linear_x: 0.08, angular_z: 0.0, reverse_period_sec: 12.0}
+    expected_severity: UNTRUSTED
+    expected_evidence_pattern: covariance_only_without_gating
+    expected_attribution_category: LIKELY_GNSS_FAULT
+
+  covariance_moderate:
+    sensor: gnss
+    fault_mode: step
+    parameters: {east_offset_m: 3.0}
+    recovery_parameters:
+      degraded_covariance_factor: 10.0
+      untrusted_covariance_factor: 10.0
+      probation_high_covariance_factor: 10.0
+      probation_covariance_factor: 5.0
+      untrusted_observations_before_gate: 100000
+    start_time: 15.0
+    duration: 30.0
+    motion: {type: stationary, linear_x: 0.0, angular_z: 0.0}
+    expected_severity: DEGRADED_OR_UNTRUSTED
+    expected_evidence_pattern: moderate_covariance_influence
+    expected_attribution_category: LIKELY_GNSS_FAULT
+
+  covariance_strong:
+    sensor: gnss
+    fault_mode: step
+    parameters: {east_offset_m: 3.0}
+    recovery_parameters:
+      degraded_covariance_factor: 100.0
+      untrusted_covariance_factor: 100.0
+      probation_high_covariance_factor: 100.0
+      probation_covariance_factor: 5.0
+      untrusted_observations_before_gate: 100000
+    start_time: 15.0
+    duration: 30.0
+    motion: {type: stationary, linear_x: 0.0, angular_z: 0.0}
+    expected_severity: DEGRADED_OR_UNTRUSTED
+    expected_evidence_pattern: strong_covariance_influence
+    expected_attribution_category: LIKELY_GNSS_FAULT

@@ -1,0 +1,52 @@
+# Week 6-only navigation estimator. The frozen Week 5 configuration remains
+# unchanged. Closed-loop healthy evidence showed that yaw-rate-only fusion let
+# GNSS position corrections rotate the weakly observed yaw state by ~pi,
+# causing controller loops and false GNSS gating. The Gazebo IMU orientation is
+# therefore admitted as RELATIVE yaw: its startup world heading becomes zero,
+# which is aligned with the fixed mission map, while yaw rate remains fused.
+ekf_trust_fusion_node:
+  ros__parameters:
+    use_sim_time: true
+    frequency: 30.0
+    sensor_timeout: 0.5
+    two_d_mode: true
+    publish_tf: false
+    print_diagnostics: true
+    map_frame: map
+    odom_frame: odom
+    base_link_frame: base_footprint
+    world_frame: odom
+
+    odom0: /ares/odom_operational
+    odom0_config: [false, false, false,
+                   false, false, false,
+                   true,  true,  false,
+                   false, false, false,
+                   false, false, false]
+    odom0_queue_size: 20
+    odom0_differential: false
+    odom0_relative: false
+
+    imu0: /ares/imu_operational
+    imu0_config: [false, false, false,
+                  false, false, true,
+                  false, false, false,
+                  false, false, true,
+                  false, false, false]
+    imu0_queue_size: 50
+    imu0_differential: false
+    imu0_relative: true
+    imu0_remove_gravitational_acceleration: false
+
+    odom1: /odometry/gps_trusted
+    odom1_config: [true,  true,  false,
+                   false, false, false,
+                   false, false, false,
+                   false, false, false,
+                   false, false, false]
+    odom1_queue_size: 10
+    odom1_differential: false
+    odom1_relative: false
+    odom1_pose_rejection_threshold: 20.0
+
+    use_control: false
